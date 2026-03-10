@@ -13,10 +13,7 @@ def test_e2e_checkout_saucedemo(page: Page):
     page.locator("text=Sauce Labs Backpack").click()
     page.locator("//button[@name='add-to-cart']").click()
     expect(page.locator("//button[@name='remove']")).to_have_text("Remove")
-    
-    # ==========================================
-    # --- YAHAN SE DAY 5 KA NAYA CODE SHURU HOGA ---
-    # ==========================================
+
     # ==========================================
     # --- YAHAN SE DAY 5 KA NAYA CODE SHURU HOGA ---
     # ==========================================
@@ -47,3 +44,4 @@ def test_e2e_checkout_saucedemo(page: Page):
     expect(page.locator(".complete-header")).to_have_text("Thank you for your order!")
     
     print("🎉 BOOM! End-to-End E-commerce flow successfully test ho gaya!")
+    
