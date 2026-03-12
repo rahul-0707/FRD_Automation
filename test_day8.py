@@ -7,7 +7,7 @@ from pages.login_page import LoginPage
 # Format: ("username", "password", "kya_login_pass_hoga?")
 # ---------------------------------------------------------
 login_data = [
-    ("standard_user", "kuch_bhi_galat_password", True),      # Sahi user -> Pass hona chahiye
+    ("standard_user", "secret_sauce", True),      # Sahi user -> Pass hona chahiye
     ("locked_out_user", "secret_sauce", False),   # Blocked user -> Error aana chahiye
     ("galat_user", "galat_password", False)       # Fake user -> Error aana chahiye
 ]

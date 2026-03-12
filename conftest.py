@@ -7,7 +7,7 @@ def pytest_runtest_makereport(item, call):
     pytest_html = item.config.pluginmanager.getplugin("html")
     outcome = yield
     report = outcome.get_result()
-    extra = getattr(report, "extra", [])
+    extra = getattr(report, "extras", [])
     
     # Agar test fail hua hai (call phase mein)...
     if report.when == "call" and report.failed:
@@ -26,4 +26,4 @@ def pytest_runtest_makereport(item, call):
             # Report ke andar yeh photo (html code) add kar do
             extra.append(pytest_html.extras.html(html))
             
-    report.extra = extra
+    report.extras = extra
