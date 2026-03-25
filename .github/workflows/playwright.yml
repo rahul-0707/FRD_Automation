@@ -1,38 +1,46 @@
 name: Playwright Cloud Tests 🚀
 
-# Yeh robot kab jagega? Jab bhi koi code 'push' karega!
 on:
   push:
     branches: [ main, master ]
 
 jobs:
   automation-test:
-    # 1. GitHub se ek naya, chamchamata Ubuntu (Linux) computer udhaar lo
     runs-on: ubuntu-latest
 
     steps:
-    # 2. Humara saara code us naye computer mein download (checkout) karo
     - name: Get Code
       uses: actions/checkout@v3
 
-    # 3. Us computer mein Python 3.13 install karo
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.13'
 
-    # 4. Humari requirements.txt padh kar Playwright aur Pytest install karo
     - name: Install Library and Engine
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 5. Playwright ke browsers (Chrome, Firefox, Safari) download karo
     - name: Install Browsers
       run: playwright install --with-deps
 
-    # 6. Akhiri vaar! Tijori ka URL do aur Test dauda do (Parallel engine ke sath)
     - name: Run the Tests
       env:
         BASE_URL: https://www.saucedemo.com/
       run: pytest test_day11.py --browser chromium -n 3
+
+    # Naya Notification Step
+    - name: Send Telegram Notification
+      if: always() 
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          🚀 *Playwright Cloud Test Report*
+          ------------------------------
+          Status: ${{ job.status == 'success' && '✅ PASSED' || '❌ FAILED' }}
+          Project: ${{ github.repository }}
+          Run ID: ${{ github.run_id }}
+          Check full report here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
