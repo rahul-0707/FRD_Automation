@@ -25,10 +25,18 @@ jobs:
     - name: Install Browsers
       run: playwright install --with-deps
 
+      # 1. YAHAN CHANGE KIYA: --html=report.html add kiya hai
     - name: Run the Tests
       env:
         BASE_URL: https://www.saucedemo.com/
-      run: pytest test_day11.py --browser chromium -n 3
+      run: pytest test_day11.py --browser chromium -n 3 --html=report.html --self-contained-html
+      # 2. NAYA STEP: Report ko GitHub par upload karne ke liye
+    - name: Upload HTML Report
+      if: always() 
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-html-report
+        path: report.html
 
     # Naya Notification Step
     - name: Send Telegram Notification
