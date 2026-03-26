@@ -1,29 +1,34 @@
 import pytest
+import base64
 
-# Yeh ek VIP Hook (CCTV Camera) hai jo har test ke result par nazar rakhta hai
+# Yeh Hook har test ke khatam hone par chalta hai
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    # HTML report wale plugin ko jagao
+    # HTML report plugin ko connect karo
     pytest_html = item.config.pluginmanager.getplugin("html")
     outcome = yield
     report = outcome.get_result()
-    extra = getattr(report, "extras", [])
     
-    # Agar test fail hua hai (call phase mein)...
+    # Version 4.x ke liye 'extra' (bina s ke) variable initialize karo
+    extra = getattr(report, "extra", [])
+
+    # Agar test 'call' phase mein FAIL hua hai...
     if report.when == "call" and report.failed:
-        # Check karo ki kya is test mein 'page' (browser) use hua tha?
+        # Check karo ki kya 'page' fixture available hai
         if "page" in item.funcargs:
             page = item.funcargs["page"]
             
-            # Browser se turant ek photo (screenshot) kheencho
+            # 1. Screenshot kheencho (PNG format mein)
             screenshot = page.screenshot(type='png')
             
-            # Photo ko code mein convert karke (Base64) direct HTML mein chipka do
-            import base64
+            # 2. Screenshot ko Base64 text mein badlo (Taaki report ke andar fit ho jaye)
             encoded = base64.b64encode(screenshot).decode('utf-8')
-            html = f'<div><img src="data:image/png;base64,{encoded}" alt="screenshot" style="width:600px;height:auto;" onclick="window.open(this.src)" align="right"/></div>'
             
-            # Report ke andar yeh photo (html code) add kar do
-            extra.append(pytest_html.extras.html(html))
+            # 3. HTML tag banao photo dikhane ke liye
+            html_img = f'<div><img src="data:image/png;base64,{encoded}" alt="screenshot" style="width:400px;height:auto;" onclick="window.open(this.src)" align="right"/></div>'
             
-    report.extras = extra
+            # 4. Is photo ko report ke 'extra' list mein add kar do
+            extra.append(pytest_html.extras.html(html_img))
+            
+    # Report mein extra data (screenshot) update karo
+    report.extra = extra
